@@ -1,10 +1,9 @@
 package io.eberlein.btinformer
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -14,17 +13,29 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.coroutineScope
 import io.paperdb.Paper
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.*
+import splitties.experimental.ExperimentalSplittiesApi
+import splitties.permissions.ensurePermission
+
 
 class MainActivity : AppCompatActivity() {
+    private val PERMISSIONS_BT = arrayOf(
+        Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH_PRIVILEGED
+    )
+    private val PERMISSIONS_GPS = arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
+
     private lateinit var serviceIntent: Intent
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
+    @ExperimentalSplittiesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -36,14 +47,32 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home, R.id.nav_filters, R.id.nav_settings), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        lifecycle.coroutineScope.launch {checkPermissions()}
         Paper.init(this)
+        setDefaultSettings()
+        EventBus.getDefault().register(this)
         serviceIntent = Intent(this, ScannerService::class.java)
         startService(serviceIntent)
     }
 
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this)
+    private fun setDefaultSettings(){
+        val b = Paper.book("settings")
+        if(!b.contains("scanTime")) b.write("scanTime", 10000)
+    }
+
+    @ExperimentalSplittiesApi
+    private suspend fun ensurePermissionOrExit(p: String) = ensurePermission(
+        permission = p,
+        askOpenSettingsOrReturn = { false },
+        showRationaleAndContinueOrReturn = { true }
+    ) {
+        return
+    }
+
+    @ExperimentalSplittiesApi
+    private suspend fun checkPermissions(){
+        PERMISSIONS_BT.forEach { ensurePermissionOrExit(it) }
+        PERMISSIONS_GPS.forEach { ensurePermissionOrExit(it) }
     }
 
     override fun onDestroy() {

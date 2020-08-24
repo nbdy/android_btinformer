@@ -14,12 +14,12 @@ class Filter(
     val data: String,
     val type: FilterType
 ) {
-    fun applies(ss: ScanResult): Boolean {
+    fun applies(ss: Device): Boolean {
         when (type) {
-            FilterType.MAC -> return ss.device.address == data
-            FilterType.NAME -> return ss.device.name == data
+            FilterType.MAC -> return ss.address == data
+            FilterType.NAME -> return ss.name == data
             FilterType.UUID -> {
-                for(u: ParcelUuid in ss.device.uuids) {
+                for(u: ParcelUuid in ss.uuids) {
                     if(u.uuid.toString() == data) return true
                 }
             }
@@ -27,9 +27,9 @@ class Filter(
         return false
     }
 
-    fun apply(lst: ArrayList<ScanResult>): ArrayList<ScanResult> {
-        val r = ArrayList<ScanResult>()
-        for(ss: ScanResult in lst){
+    fun apply(lst: ArrayList<Device>): ArrayList<Device> {
+        val r = ArrayList<Device>()
+        for(ss: Device in lst){
             if(applies(ss)) r.add(ss)
         }
         return r

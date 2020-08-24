@@ -1,16 +1,14 @@
 package io.eberlein.btinformer.ui
 
-import android.bluetooth.le.ScanResult
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.eberlein.btinformer.R
-import io.eberlein.btinformer.RAdapter
-import io.eberlein.btinformer.ScannerService
+import io.eberlein.btinformer.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.android.synthetic.main.vh_device.view.*
@@ -19,19 +17,36 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class HomeFragment : Fragment() {
+    private val TAG = "HomeFragment"
     private val adapter = DeviceAdapter()
 
-    class DeviceHolder(itemView: View) : RAdapter.RVH<ScanResult>(itemView) {
-        override fun set(item: ScanResult){
-            itemView.tv_name.text = item.device.name
-            itemView.tv_mac.text = item.device.address
+    class DeviceHolder(itemView: View) : RAdapter.RVH<Device>(itemView) {
+        override fun set(item: Device){
+            itemView.tv_name.text = item.name
+            itemView.tv_mac.text = item.address
             itemView.tv_rssi.text = item.rssi.toString()
         }
     }
 
-    class DeviceAdapter : RAdapter<DeviceHolder, ScanResult>() {
+    class DeviceAdapter : RAdapter<DeviceHolder, Device>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceHolder {
-            return DeviceHolder(View.inflate(parent.context, R.layout.vh_device, parent))
+            return DeviceHolder(inflate(parent.context, R.layout.vh_device, parent))
+        }
+
+        override fun add(item: Device){
+            var r = -1
+            for(i in items.indices){
+                if(items[i].address == item.address) {
+                    r = i
+                }
+            }
+            if(r != -1) {
+                items[r] = item
+                notifyItemChanged(r)
+            } else {
+                items.add(item)
+                notifyItemInserted(items.size)
+            }
         }
     }
 
@@ -41,7 +56,10 @@ class HomeFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-        view.btnSearch.setOnClickListener { EventBus.getDefault().post(ScannerService.EventChangeScan()) }
+        view.btnSearch.setOnClickListener {
+            adapter.clear()
+            EventBus.getDefault().post(ScannerService.EventChangeScan())
+        }
         view.rv_devices.layoutManager = LinearLayoutManager(context)
         view.rv_devices.adapter = adapter
         view.rv_devices.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
@@ -60,12 +78,13 @@ class HomeFragment : Fragment() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEventScanningChanged(e: ScannerService.EventScanningChanged){
+        Log.d(TAG, "onEventScanningChanged")
         if(e.scanning) btnSearch.setImageResource(R.drawable.baseline_search_off_white_48)
         else btnSearch.setImageResource(R.drawable.baseline_search_white_48)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEventDevicesFound(e: ScannerService.EventDevicesFound){
-        adapter.add(e.devices)
+    fun onEventDeviceFound(e: ScannerService.EventFoundDevice){
+        adapter.add(e.device)
     }
 }

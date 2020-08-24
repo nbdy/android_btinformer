@@ -51,7 +51,11 @@ class FiltersFragment : Fragment() {
 
     class FilterAdapter : RAdapter<FilterHolder, Filter>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilterHolder {
-            return FilterHolder(View.inflate(parent.context, R.layout.vh_filter, parent))
+            return FilterHolder(inflate(parent.context, R.layout.vh_filter, parent))
+        }
+
+        override fun onClick(position: Int) {
+
         }
     }
 
@@ -66,6 +70,10 @@ class FiltersFragment : Fragment() {
         view.rv_filters.layoutManager = LinearLayoutManager(context)
         view.rv_filters.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         adapter.add(Filter.getAll())
+        view.fab_add.setOnClickListener {
+            dialog.set(Filter("", "", FilterType.MAC))
+            dialog.show()
+        }
         return view
     }
 }

@@ -11,34 +11,36 @@ import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
 import android.util.Log
+import io.paperdb.Paper
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import kotlin.properties.Delegates
 
 class ScannerService : Service() {
     private var TAG = "ScannerService"
 
     class EventReadyChanged(val ready: Boolean)
     class EventScanningChanged(val scanning: Boolean)
-    class EventDevicesFound(val devices: ArrayList<ScanResult>)
-    class EventChangeScan()
+    class EventDevicesFound(val devices: ArrayList<Device>)
+    class EventFoundDevice(val device: Device)
+    class EventChangeScan
 
-    private var DURATION = 10000L
     private var btWasEnabled = false
 
     private lateinit var btManager: BluetoothManager
     private lateinit var btAdapter: BluetoothAdapter
     private lateinit var leScanner: BluetoothLeScanner
 
-    private var foundDevices = ArrayList<ScanResult>()
+    private var foundDevices = ArrayList<Device>()
 
     private val scanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
             if (result != null) {
-                Log.d(TAG, "found device: ${result.device.address} with name: ${result.device.name}")
-                foundDevices.add(result)
+                val d = Device(result)
+                Log.d(TAG, "found device: ${d.address} with name: ${d.name}")
+                EventBus.getDefault().post(EventFoundDevice(d))
+                foundDevices.add(d)
             }
         }
     }
@@ -93,15 +95,18 @@ class ScannerService : Service() {
             leScanner.stopScan(scanCallback)
             Log.d(TAG, "informing UI about the current scan status and the found devices")
             EventBus.getDefault().post(EventScanningChanged(scanning))
+            Log.d(TAG, "sending ${foundDevices.size} devices to the ui")
             EventBus.getDefault().post(EventDevicesFound(foundDevices))
         }
     }
 
     private fun startScan(){
+        foundDevices.clear()
+        if(!btAdapter.isEnabled) btAdapter.enable()
         Log.d(TAG, "startScan")
         if(!scanning){
             Log.d(TAG, "starting a scan")
-            handler.postDelayed(timeoutRunnable, DURATION)
+            handler.postDelayed(timeoutRunnable, Paper.book("settings").read("scanTime"))
             scanning = true
             Log.d(TAG, "informing UI that we started scanning")
             EventBus.getDefault().post(EventScanningChanged(scanning))
