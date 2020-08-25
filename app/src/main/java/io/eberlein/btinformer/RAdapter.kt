@@ -2,21 +2,15 @@ package io.eberlein.btinformer
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class RAdapter<VH: RAdapter.RVH<T>, T>() : RecyclerView.Adapter<VH>() {
+abstract class RAdapter<VH: RAdapter.RVH<T>, T>(private val onClickListener: (T) -> Unit) : RecyclerView.Adapter<VH>() {
     protected val items = ArrayList<T>()
 
     abstract class RVH<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
         abstract fun set(item: T)
-    }
-
-    open fun onClick(position: Int){
-
     }
 
     override fun getItemCount(): Int {
@@ -24,8 +18,9 @@ abstract class RAdapter<VH: RAdapter.RVH<T>, T>() : RecyclerView.Adapter<VH>() {
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        holder.set(items[position])
-        holder.itemView.setOnClickListener { onClick(position) }
+        val i = items[position]
+        holder.set(i)
+        holder.itemView.setOnClickListener { onClickListener(i) }
     }
 
     open fun add(item: T){

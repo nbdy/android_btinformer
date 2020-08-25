@@ -10,9 +10,9 @@ enum class FilterType {
 }
 
 class Filter(
-    val name: String,
-    val data: String,
-    val type: FilterType
+    var name: String,
+    var data: String,
+    var type: FilterType
 ) {
     fun applies(ss: Device): Boolean {
         when (type) {
@@ -48,6 +48,10 @@ class Filter(
             val r = ArrayList<Filter>()
             Paper.book("Filters").allKeys.forEach { r.add(get(it)) }
             return r
+        }
+
+        fun save(name: String, data: String) {
+            Paper.book("Filters").write(name, data)
         }
     }
 }

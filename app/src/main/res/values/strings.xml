@@ -8,4 +8,9 @@
     <string name="data">data</string>
     <string name="mac">mac</string>
     <string name="uuid">uuid</string>
+    <string name="cancel">cancel</string>
+    <string name="save">save</string>
+    <string name="gps_logging">gps logging</string>
+    <string name="sleep_time">sleep time</string>
+    <string name="milliseconds">milliseconds</string>
 </resources>

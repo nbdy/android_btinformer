@@ -18,7 +18,7 @@ import org.greenrobot.eventbus.ThreadMode
 
 class HomeFragment : Fragment() {
     private val TAG = "HomeFragment"
-    private val adapter = DeviceAdapter()
+    private lateinit var adapter: DeviceAdapter
 
     class DeviceHolder(itemView: View) : RAdapter.RVH<Device>(itemView) {
         override fun set(item: Device){
@@ -28,7 +28,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    class DeviceAdapter : RAdapter<DeviceHolder, Device>() {
+    class DeviceAdapter(onClickListener: (Device) -> Unit) : RAdapter<DeviceHolder, Device>(onClickListener) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceHolder {
             return DeviceHolder(inflate(parent.context, R.layout.vh_device, parent))
         }
@@ -56,6 +56,7 @@ class HomeFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+        adapter = DeviceAdapter {  } // todo show device specific data in a dialog
         view.btnSearch.setOnClickListener {
             adapter.clear()
             EventBus.getDefault().post(ScannerService.EventChangeScan())

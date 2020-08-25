@@ -65,6 +65,7 @@ class ScannerService : Service() {
         btAdapter = btManager.adapter
         if(!btAdapter.isEnabled) btAdapter.enable()
         else btWasEnabled = true
+        while(btAdapter.bluetoothLeScanner == null) Thread.sleep(200)
         leScanner = btAdapter.bluetoothLeScanner
         Log.d(TAG, "informing UI that we are ready")
         EventBus.getDefault().post(EventReadyChanged(true))

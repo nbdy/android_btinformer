@@ -14,6 +14,8 @@ import io.eberlein.btinformer.Filter
 import io.eberlein.btinformer.FilterType
 import io.eberlein.btinformer.R
 import io.eberlein.btinformer.RAdapter
+import io.paperdb.Paper
+import kotlinx.android.synthetic.main.dialog_filter.*
 import kotlinx.android.synthetic.main.dialog_filter.view.*
 import kotlinx.android.synthetic.main.fragment_filters.view.*
 import kotlinx.android.synthetic.main.vh_filter.view.*
@@ -21,25 +23,36 @@ import kotlin.collections.ArrayList
 
 // todo allow deletion of filters
 class FiltersFragment : Fragment() {
-    private val adapter = FilterAdapter()
+    private lateinit var adapter: FilterAdapter
     private lateinit var dialog: ViewFilterDialog
 
     // todo save filter if dialog closed
-    class ViewFilterDialog(c: Context, val v: View) : Dialog(c) {
+    class ViewFilterDialog(c: Context, private val view: View) : Dialog(c) {
         private var typeAdapter: ArrayAdapter<String>
+        private lateinit var filter: Filter
 
         init {
             val al = ArrayList<String>()
             enumValues<FilterType>().iterator().forEach { ft -> al.add(ft.name) }
             typeAdapter = ArrayAdapter(c, android.R.layout.simple_spinner_item, al)
+            setContentView(R.layout.dialog_filter)
+            btn_save.setOnClickListener {save()}
         }
 
-        constructor(c: Context, v: View, f: Filter): this(c, v){ set(f) }
+        fun save(){
+            filter.name = et_name.text.toString()
+            filter.data = et_data.text.toString()
+            filter.type = enumValues<FilterType>()[sp_data_type.selectedItemPosition]
+            filter.save()
+        }
 
-        fun set(f: Filter){
-            v.et_name.setText(f.name)
-            v.et_data.setText(f.data)
-            v.sp_data_type.setSelection(typeAdapter.getPosition(f.type.name))
+        fun set(f: Filter): Dialog {
+            filter = f
+            setTitle(f.name)
+            view.et_name.setText(f.name)
+            view.et_data.setText(f.data)
+            view.sp_data_type.setSelection(typeAdapter.getPosition(f.type.name))
+            return this
         }
     }
 
@@ -49,13 +62,9 @@ class FiltersFragment : Fragment() {
         }
     }
 
-    class FilterAdapter : RAdapter<FilterHolder, Filter>() {
+    class FilterAdapter(onClickListener: (Filter) -> Unit) : RAdapter<FilterHolder, Filter>(onClickListener) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilterHolder {
             return FilterHolder(inflate(parent.context, R.layout.vh_filter, parent))
-        }
-
-        override fun onClick(position: Int) {
-
         }
     }
 
@@ -66,6 +75,7 @@ class FiltersFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_filters, container, false)
         dialog = context?.let { ViewFilterDialog(it, inflater.inflate(R.layout.dialog_filter, null, false)) }!!
+        adapter = FilterAdapter { filter -> dialog.set(filter).show() }
         view.rv_filters.adapter = adapter
         view.rv_filters.layoutManager = LinearLayoutManager(context)
         view.rv_filters.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
