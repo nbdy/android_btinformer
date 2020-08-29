@@ -20,6 +20,8 @@ class HomeFragment : Fragment() {
     private val TAG = "HomeFragment"
     private lateinit var adapter: DeviceAdapter
 
+    class EventDeviceSelected(val device: Device)
+
     class DeviceHolder(itemView: View) : RAdapter.RVH<Device>(itemView) {
         override fun set(item: Device){
             itemView.tv_name.text = item.name
@@ -28,7 +30,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    class DeviceAdapter(onClickListener: (Device) -> Unit) : RAdapter<DeviceHolder, Device>(onClickListener) {
+    class DeviceAdapter(onClickListener: (Device) -> Unit) : DBObjectAdapter<DeviceHolder, Device>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceHolder {
             return DeviceHolder(inflate(parent.context, R.layout.vh_device, parent))
         }
@@ -47,6 +49,10 @@ class HomeFragment : Fragment() {
                 items.add(item)
                 notifyItemInserted(items.size)
             }
+        }
+
+        override fun onItemClick(item: Device) {
+            EventBus.getDefault().post(EventDeviceSelected(item))
         }
     }
 
@@ -87,5 +93,10 @@ class HomeFragment : Fragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEventDeviceFound(e: ScannerService.EventFoundDevice){
         adapter.add(e.device)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEventDeviceSelected(e: EventDeviceSelected){
+        // todo
     }
 }

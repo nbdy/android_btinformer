@@ -45,20 +45,21 @@
         android:layout_height="wrap_content"/>
 
     <Button
-        android:id="@+id/btn_cancel"
-        android:layout_alignEnd="@id/et_name"
+        android:id="@+id/btn_save"
+        android:layout_marginEnd="8dp"
+        android:layout_alignParentEnd="true"
         android:layout_below="@id/sp_data_type"
-        android:layout_marginTop="4dp"
-        android:text="@string/cancel"
+        android:layout_marginTop="8dp"
+        android:text="@string/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
     <Button
-        android:id="@+id/btn_save"
-        android:layout_toStartOf="@id/btn_cancel"
+        android:id="@+id/btn_cancel"
+        android:layout_alignBaseline="@id/btn_save"
+        android:layout_toStartOf="@id/btn_save"
         android:layout_marginEnd="8dp"
-        android:layout_alignBaseline="@id/btn_cancel"
-        android:text="@string/save"
+        android:text="@string/cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 

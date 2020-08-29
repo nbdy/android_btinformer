@@ -13,4 +13,5 @@
     <string name="gps_logging">gps logging</string>
     <string name="sleep_time">sleep time</string>
     <string name="milliseconds">milliseconds</string>
+    <string name="delete">delete</string>
 </resources>

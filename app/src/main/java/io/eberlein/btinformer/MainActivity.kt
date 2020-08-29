@@ -49,15 +49,9 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
         lifecycle.coroutineScope.launch {checkPermissions()}
         Paper.init(this)
-        setDefaultSettings()
         EventBus.getDefault().register(this)
         serviceIntent = Intent(this, ScannerService::class.java)
         startService(serviceIntent)
-    }
-
-    private fun setDefaultSettings(){
-        val b = Paper.book("settings")
-        if(!b.contains("scanTime")) b.write("scanTime", 10000)
     }
 
     @ExperimentalSplittiesApi

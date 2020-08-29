@@ -7,8 +7,7 @@ class GPSLogEntry(
     val timestamp: Timestamp,
     val device: Device,
     val location: Location
-) {
-
+): DBObject() {
     companion object {
         fun getAll(): ArrayList<GPSLogEntry>{
             return ArrayList() // todo

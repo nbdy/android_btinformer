@@ -11,7 +11,6 @@ import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
 import android.util.Log
-import io.paperdb.Paper
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -107,7 +106,7 @@ class ScannerService : Service() {
         Log.d(TAG, "startScan")
         if(!scanning){
             Log.d(TAG, "starting a scan")
-            handler.postDelayed(timeoutRunnable, Paper.book("settings").read("scanTime"))
+            handler.postDelayed(timeoutRunnable, Settings.getOrCreate().scanTime.toLong())
             scanning = true
             Log.d(TAG, "informing UI that we started scanning")
             EventBus.getDefault().post(EventScanningChanged(scanning))

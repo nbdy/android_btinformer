@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 
 class SettingsFragment : Fragment() {
-    private val settings = Settings.get()
+    private val settings = Settings.getOrCreate()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,7 +23,6 @@ class SettingsFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_settings, container, false)
         v.sw_gps.setOnClickListener {
             settings.gpsLogging = sw_gps.isActivated
-            settings.save()
         }
 
         v.et_scan_time.addTextChangedListener {
@@ -31,7 +30,6 @@ class SettingsFragment : Fragment() {
             if(sT < 500 || sT > 1000 * 60) Toast.makeText(context, "error: your scan time value is either below 500 or above 60000", Toast.LENGTH_LONG).show()
             else {
                 settings.scanTime = sT
-                settings.save()
             }
         }
 
