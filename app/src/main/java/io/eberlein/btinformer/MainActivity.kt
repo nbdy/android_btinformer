@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
         lifecycle.coroutineScope.launch {checkPermissions()}
         Paper.init(this)
+        NotificationHelper.setup(this)
         EventBus.getDefault().register(this)
         serviceIntent = Intent(this, ScannerService::class.java)
         startService(serviceIntent)

@@ -1,13 +1,19 @@
-package io.eberlein.btinformer
+package io.eberlein.btinformer.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import io.eberlein.btinformer.objects.DBObject
 import kotlinx.android.synthetic.main.vh_filter.view.*
 
 abstract class DBObjectAdapter<VH: RAdapter.RVH<T>, T: DBObject>: RAdapter<VH, T>() {
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        super.onBindViewHolder(holder, position)
+        if(holder.itemView.btn_delete != null) holder.itemView.btn_delete.setOnClickListener { onDeleteClick(items[position]) }
+    }
+
     override fun onDeleteClick(item: T) {
         item.delete()
         notifyDataSetChanged()
@@ -32,7 +38,7 @@ abstract class RAdapter<VH: RAdapter.RVH<T>, T>: RecyclerView.Adapter<VH>() {
 
     abstract fun onItemClick(item: T)
 
-    abstract fun onDeleteClick(item: T)
+    open fun onDeleteClick(item: T) {}
 
     override fun getItemCount(): Int {
         return items.size
@@ -43,7 +49,6 @@ abstract class RAdapter<VH: RAdapter.RVH<T>, T>: RecyclerView.Adapter<VH>() {
         holder.set(i)
         holder.itemView.setOnClickListener { onItemClick(i) }
         holder.itemView.setOnLongClickListener { onItemLongClick(holder); false }
-        holder.itemView.btn_delete.setOnClickListener { onDeleteClick(i) }
     }
 
     open fun add(item: T){

@@ -1,23 +1,20 @@
 package io.eberlein.btinformer.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.eberlein.btinformer.*
-import kotlinx.android.synthetic.main.dialog_filter.*
-import kotlinx.android.synthetic.main.dialog_filter.view.*
+import io.eberlein.btinformer.adapters.FilterAdapter
+import io.eberlein.btinformer.dialogs.ViewFilterDialog
+import io.eberlein.btinformer.objects.Filter
 import kotlinx.android.synthetic.main.fragment_filters.view.*
-import kotlinx.android.synthetic.main.vh_filter.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import kotlin.collections.ArrayList
 
 // todo allow deletion of filters
 class FiltersFragment : Fragment() {
@@ -26,50 +23,6 @@ class FiltersFragment : Fragment() {
 
     class EventFilterSelected(val filter: Filter)
     class EventFilterSaved(val filter: Filter)
-
-    class ViewFilterDialog(c: Context) : DBObjectDialog<Filter>(c, R.layout.dialog_filter) {
-        private lateinit var filter: Filter
-        private var options: ArrayList<String> = ArrayList()
-        private var selectedOption: String
-
-        init {
-            FilterType.values().forEach { options.add(it.name) }
-            selectedOption = options[0]
-            view.sp_data_type.adapter = ArrayAdapter<String>(c, android.R.layout.simple_spinner_item, options)
-        }
-
-        override fun save(){
-            filter.name = et_name.text.toString()
-            filter.data = et_data.text.toString()
-            filter.type = selectedOption
-            filter.save()
-            EventBus.getDefault().post(EventFilterSaved(filter))
-        }
-
-        override fun set(i: Filter) {
-            filter = i
-            setTitle(i.name)
-            view.et_name.setText(i.name)
-            view.et_data.setText(i.data)
-            view.sp_data_type.setSelection(options.indexOf(i.type))
-        }
-    }
-
-    class FilterHolder(itemView: View) : RAdapter.RVH<Filter>(itemView) {
-        override fun set(item: Filter) {
-            itemView.tv_name.text = item.name
-        }
-    }
-
-    class FilterAdapter: DBObjectAdapter<FilterHolder, Filter>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilterHolder {
-            return FilterHolder(inflate(parent.context, R.layout.vh_filter, parent))
-        }
-
-        override fun onItemClick(item: Filter) {
-            EventBus.getDefault().post(EventFilterSelected(item))
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

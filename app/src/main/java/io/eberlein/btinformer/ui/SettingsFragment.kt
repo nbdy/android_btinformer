@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import io.eberlein.btinformer.R
-import io.eberlein.btinformer.Settings
+import io.eberlein.btinformer.objects.Settings
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 

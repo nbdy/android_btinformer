@@ -1,10 +1,9 @@
-package io.eberlein.btinformer
+package io.eberlein.btinformer.objects
 
 import android.bluetooth.le.ScanResult
 import android.os.ParcelUuid
 import io.paperdb.Book
 import io.paperdb.Paper
-import java.util.*
 import kotlin.collections.ArrayList
 
 class Device(

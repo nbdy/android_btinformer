@@ -11,6 +11,10 @@ import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
 import android.util.Log
+import io.eberlein.btinformer.objects.Device
+import io.eberlein.btinformer.objects.Filter
+import io.eberlein.btinformer.objects.Settings
+import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -38,8 +42,15 @@ class ScannerService : Service() {
             if (result != null) {
                 val d = Device(result)
                 Log.d(TAG, "found device: ${d.address} with name: ${d.name}")
+                runBlocking { applyFilters(d) }
                 EventBus.getDefault().post(EventFoundDevice(d))
                 foundDevices.add(d)
+            }
+        }
+
+        fun applyFilters(device: Device){
+            for(f: Filter in Filter.all()){
+                if(f.applies(device)) NotificationHelper.create(applicationContext, device, f)
             }
         }
     }

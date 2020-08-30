@@ -1,4 +1,4 @@
-package io.eberlein.btinformer
+package io.eberlein.btinformer.objects
 
 import io.paperdb.Book
 import io.paperdb.Paper

@@ -1,4 +1,4 @@
-package io.eberlein.btinformer
+package io.eberlein.btinformer.objects
 
 import android.location.Location
 import java.sql.Timestamp

@@ -9,52 +9,22 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.eberlein.btinformer.*
+import io.eberlein.btinformer.adapters.DeviceAdapter
+import io.eberlein.btinformer.dialogs.DeviceDialog
+import io.eberlein.btinformer.objects.Device
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
-import kotlinx.android.synthetic.main.vh_device.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
+
 class HomeFragment : Fragment() {
     private val TAG = "HomeFragment"
     private lateinit var adapter: DeviceAdapter
+    private lateinit var deviceDialog: DeviceDialog
 
     class EventDeviceSelected(val device: Device)
-
-    class DeviceHolder(itemView: View) : RAdapter.RVH<Device>(itemView) {
-        override fun set(item: Device){
-            itemView.tv_name.text = item.name
-            itemView.tv_mac.text = item.address
-            itemView.tv_rssi.text = item.rssi.toString()
-        }
-    }
-
-    class DeviceAdapter(onClickListener: (Device) -> Unit) : DBObjectAdapter<DeviceHolder, Device>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceHolder {
-            return DeviceHolder(inflate(parent.context, R.layout.vh_device, parent))
-        }
-
-        override fun add(item: Device){
-            var r = -1
-            for(i in items.indices){
-                if(items[i].address == item.address) {
-                    r = i
-                }
-            }
-            if(r != -1) {
-                items[r] = item
-                notifyItemChanged(r)
-            } else {
-                items.add(item)
-                notifyItemInserted(items.size)
-            }
-        }
-
-        override fun onItemClick(item: Device) {
-            EventBus.getDefault().post(EventDeviceSelected(item))
-        }
-    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -62,7 +32,8 @@ class HomeFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-        adapter = DeviceAdapter {  } // todo show device specific data in a dialog
+        adapter = DeviceAdapter()
+        deviceDialog = DeviceDialog(requireContext())
         view.btnSearch.setOnClickListener {
             adapter.clear()
             EventBus.getDefault().post(ScannerService.EventChangeScan())
@@ -97,6 +68,7 @@ class HomeFragment : Fragment() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEventDeviceSelected(e: EventDeviceSelected){
-        // todo
+        deviceDialog.set(e.device)
+        deviceDialog.show()
     }
 }

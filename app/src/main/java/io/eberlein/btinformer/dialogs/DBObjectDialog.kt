@@ -1,9 +1,10 @@
-package io.eberlein.btinformer
+package io.eberlein.btinformer.dialogs
 
 import android.app.Dialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import io.eberlein.btinformer.objects.DBObject
 import kotlinx.android.synthetic.main.dialog_filter.view.*
 
 abstract class DBObjectDialog<T: DBObject>(context: Context, contentView: Int): Dialog(context) {
@@ -12,11 +13,13 @@ abstract class DBObjectDialog<T: DBObject>(context: Context, contentView: Int): 
 
     init {
         this.setContentView(view)
-        view.btn_save.setOnClickListener { save(); dismiss() }
-        view.btn_cancel.setOnClickListener { dismiss() }
+        if(view.btn_save != null) view.btn_save.setOnClickListener { save(); dismiss() }
+        if(view.btn_cancel != null) view.btn_cancel.setOnClickListener { dismiss() }
     }
 
-    abstract fun set(i: T)
+    open fun set(i: T) {
+        item = i
+    }
 
     abstract fun save()
 }

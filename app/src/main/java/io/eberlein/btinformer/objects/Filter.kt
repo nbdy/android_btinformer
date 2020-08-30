@@ -1,6 +1,7 @@
-package io.eberlein.btinformer
+package io.eberlein.btinformer.objects
 
 import android.os.ParcelUuid
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import io.paperdb.Book
 import io.paperdb.Paper
@@ -46,7 +47,10 @@ class Filter(var name: String, var data: String, var type: String): DBObject() {
 
         fun all(): ArrayList<Filter> {
             val r = ArrayList<Filter>()
-            for(e in book().allKeys) r.add(book().read(e))
+            for(e in book().allKeys) {
+                Log.d("Filter.all", e)
+                r.add(book().read(e))
+            }
             return r
         }
 

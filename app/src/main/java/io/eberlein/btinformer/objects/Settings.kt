@@ -1,7 +1,8 @@
-package io.eberlein.btinformer
+package io.eberlein.btinformer.objects
 
 import io.paperdb.Book
 import io.paperdb.Paper
+import io.paperdb.PaperDbException
 
 class Settings(
     var gpsLogging: Boolean,
@@ -9,7 +10,7 @@ class Settings(
 ): DBObject() {
     companion object {
         private const val bookName: String = "settings"
-        private const val settingId: String = "00000000-0000-0000-0000-000000000000"
+        private const val settingId: String = "settings"
 
         private fun book(): Book {
             return Paper.book(bookName)
@@ -17,9 +18,15 @@ class Settings(
 
         fun getOrCreate(): Settings {
             var r = book().read<Settings>(settingId)
-            if(r == null) r = Settings(false, 10000)
-            book().write(settingId, r)
+            if (r == null) {
+                r = Settings(false, 10000)
+                r.save()
+            }
             return r
         }
+    }
+
+    override fun save(){
+        book().write(id, this)
     }
 }
