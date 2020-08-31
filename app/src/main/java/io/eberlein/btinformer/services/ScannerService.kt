@@ -29,6 +29,7 @@ class ScannerService : Service() {
     class EventDevicesFound(val devices: ArrayList<Device>)
     class EventFoundDevice(val device: Device)
     class EventChangeScan
+    class EventChangeContinuousScanning(val value: Boolean)
 
     private var btWasEnabled = false
 
@@ -37,6 +38,7 @@ class ScannerService : Service() {
     private lateinit var leScanner: BluetoothLeScanner
 
     private lateinit var oui: OUI
+    private var continuousScanning = false
 
     private var foundDevices = ArrayList<Device>()
 
@@ -108,6 +110,11 @@ class ScannerService : Service() {
         oui = e.oui
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEventChangeContinuousScanning(e: EventChangeContinuousScanning) {
+        continuousScanning = e.value
+    }
+
     private fun stopScan(){
         Log.d(TAG, "stopScan")
         if(scanning){
@@ -118,6 +125,7 @@ class ScannerService : Service() {
             EventBus.getDefault().post(EventScanningChanged(scanning))
             Log.d(TAG, "sending ${foundDevices.size} devices to the ui")
             EventBus.getDefault().post(EventDevicesFound(foundDevices))
+            if(continuousScanning) startScan()
         }
     }
 

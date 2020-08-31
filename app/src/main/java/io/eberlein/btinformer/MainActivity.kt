@@ -3,7 +3,6 @@ package io.eberlein.btinformer
 import android.Manifest
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -14,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.coroutineScope
+import io.eberlein.btinformer.services.LocationService
 import io.eberlein.btinformer.services.OUIService
 import io.eberlein.btinformer.services.ScannerService
 import io.paperdb.Paper
@@ -24,7 +24,8 @@ import org.greenrobot.eventbus.ThreadMode
 import splitties.experimental.ExperimentalSplittiesApi
 import splitties.permissions.ensurePermission
 
-
+// todo fix <- button showing upon selecting fragment
+// do some stuff in backstackchangelistener or smthn
 class MainActivity : AppCompatActivity() {
     private val PERMISSIONS_BT = arrayOf(
         Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH_PRIVILEGED
@@ -35,6 +36,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var scanServiceIntent: Intent
     private lateinit var ouiServiceIntent: Intent
+    private lateinit var locationServiceIntent: Intent
+
+    private lateinit var serviceIntents: Array<Intent>
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -42,6 +46,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        EventBus.getDefault().register(this)
+        setupUi()
+        lifecycle.coroutineScope.launch {checkPermissions()}
+        Paper.init(this)
+        NotificationHelper.setup(this)
+        startServices()
+    }
+
+    private fun setupUi(){
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
@@ -50,14 +63,20 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home, R.id.nav_filters, R.id.nav_settings), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        lifecycle.coroutineScope.launch {checkPermissions()}
-        Paper.init(this)
-        NotificationHelper.setup(this)
-        EventBus.getDefault().register(this)
+    }
+
+    private fun startServices(){
+        locationServiceIntent = Intent(this, LocationService::class.java)
         scanServiceIntent = Intent(this, ScannerService::class.java)
         ouiServiceIntent = Intent(this, OUIService::class.java)
-        startService(scanServiceIntent)
-        startService(ouiServiceIntent)
+
+        serviceIntents = arrayOf(locationServiceIntent, scanServiceIntent, ouiServiceIntent)
+
+        for (i in serviceIntents) startService(i)
+    }
+
+    private fun stopServices() {
+        for(i in serviceIntents) stopService(i)
     }
 
     @ExperimentalSplittiesApi
@@ -77,19 +96,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        stopService(scanServiceIntent)
-        stopService(ouiServiceIntent)
+        stopServices()
         EventBus.getDefault().unregister(this)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEventReadyChanged(e: ScannerService.EventReadyChanged){
         // todo
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
-        return true
     }
 
     override fun onSupportNavigateUp(): Boolean {

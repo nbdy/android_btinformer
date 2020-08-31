@@ -46,6 +46,7 @@
         android:id="@+id/tv_mac"
         android:layout_alignStart="@id/tv_filter_creation"
         android:layout_below="@id/tv_filter_creation"
+        android:freezesText="true"
         android:layout_marginTop="4dp"
         android:layout_marginStart="8dp"
         android:layout_width="wrap_content"
@@ -56,6 +57,7 @@
         android:layout_alignStart="@id/tv_mac"
         android:layout_below="@id/tv_mac"
         android:layout_marginTop="4dp"
+        android:freezesText="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 

@@ -39,6 +39,9 @@ class ScanFragment : Fragment() {
             adapter.clear()
             EventBus.getDefault().post(ScannerService.EventChangeScan())
         }
+        view.sw_continuous.setOnClickListener {
+            EventBus.getDefault().post(ScannerService.EventChangeContinuousScanning(view.sw_continuous.isChecked))
+        }
         view.rv_devices.layoutManager = LinearLayoutManager(context)
         view.rv_devices.adapter = adapter
         view.rv_devices.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))

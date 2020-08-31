@@ -61,6 +61,10 @@ class Filter(var name: String, var data: String, var type: String): DBObject() {
             return r
         }
 
+        fun fromName(name: String): Filter {
+            return Filter(name, name, FilterType.NAME.name)
+        }
+
         fun fromMAC(mac: String): Filter {
             return Filter(mac, mac, FilterType.MAC.name)
         }

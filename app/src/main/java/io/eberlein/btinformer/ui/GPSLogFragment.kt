@@ -31,7 +31,7 @@ class GPSLogFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_gps_log, container, false)
         dialog = GPSLogEntryDialog(requireContext())
         adapter = GPSLogAdapter()
-        v.rv_gps_log.adapter = adapter // todo
+        v.rv_gps_log.adapter = adapter
         v.rv_gps_log.layoutManager = LinearLayoutManager(context)
         v.rv_gps_log.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         adapter.add(GPSLogEntry.getAll())
@@ -40,7 +40,7 @@ class GPSLogFragment : Fragment() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEventGPSLogEntrySelected(e: EventGPSLogEntrySelected){
-        // todo
+
     }
 
     override fun onStart() {

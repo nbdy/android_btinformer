@@ -22,6 +22,12 @@ class FilterDialog(c: Context) : DBObjectDialog<Filter>(c, R.layout.dialog_filte
     }
 
     companion object {
+        fun forName(c: Context, name: String): FilterDialog {
+            val d = FilterDialog(c)
+            d.set(Filter.fromName(name))
+            return d
+        }
+
         fun forMAC(c: Context, mac: String): FilterDialog {
             val d = FilterDialog(c)
             d.set(Filter.fromMAC(mac))

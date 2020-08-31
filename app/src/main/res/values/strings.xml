@@ -12,10 +12,17 @@
     <string name="save">save</string>
     <string name="scan">scan</string>
     <string name="manuf">manuf</string>
+    <string name="continuous_scanning">continuous scanning</string>
     <string name="gps_logging">gps logging</string>
     <string name="sleep_time">sleep time</string>
     <string name="milliseconds">milliseconds</string>
     <string name="delete">delete</string>
+    <string name="gps_log">gps log</string>
+    <string name="latitude">latitude</string>
+    <string name="longitude">longitude</string>
+    <string name="view">view</string>
+    <string name="matched_filter">matched filter</string>
+    <string name="matched_device">matched device</string>
     <string name="create_filter">create filter</string>
     <string name="tutorial">tutorial</string>
     <string name="filter_creation">filter creation</string>

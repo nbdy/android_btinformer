@@ -17,6 +17,10 @@
             android:icon="@drawable/baseline_filter_alt_white_48"
             android:title="@string/filters" />
         <item
+            android:id="@+id/nav_gps_log"
+            android:icon="@drawable/baseline_gps_fixed_white_48"
+            android:title="@string/gps_log"/>
+        <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/baseline_settings_white_48"
             android:title="@string/settings" />

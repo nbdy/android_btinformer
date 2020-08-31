@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".ui.HomeFragment">
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/sw_continuous"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/continuous_scanning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnSearch"
         android:layout_width="wrap_content"
@@ -18,6 +27,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_devices"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/sw_continuous"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
