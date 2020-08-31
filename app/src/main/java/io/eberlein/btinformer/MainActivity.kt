@@ -14,6 +14,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.coroutineScope
+import io.eberlein.btinformer.services.OUIService
+import io.eberlein.btinformer.services.ScannerService
 import io.paperdb.Paper
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -31,7 +33,8 @@ class MainActivity : AppCompatActivity() {
         Manifest.permission.ACCESS_FINE_LOCATION
     )
 
-    private lateinit var serviceIntent: Intent
+    private lateinit var scanServiceIntent: Intent
+    private lateinit var ouiServiceIntent: Intent
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -51,8 +54,10 @@ class MainActivity : AppCompatActivity() {
         Paper.init(this)
         NotificationHelper.setup(this)
         EventBus.getDefault().register(this)
-        serviceIntent = Intent(this, ScannerService::class.java)
-        startService(serviceIntent)
+        scanServiceIntent = Intent(this, ScannerService::class.java)
+        ouiServiceIntent = Intent(this, OUIService::class.java)
+        startService(scanServiceIntent)
+        startService(ouiServiceIntent)
     }
 
     @ExperimentalSplittiesApi
@@ -72,7 +77,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        stopService(serviceIntent)
+        stopService(scanServiceIntent)
+        stopService(ouiServiceIntent)
         EventBus.getDefault().unregister(this)
     }
 

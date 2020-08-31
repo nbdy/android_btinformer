@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.eberlein.btinformer.*
 import io.eberlein.btinformer.adapters.FilterAdapter
-import io.eberlein.btinformer.dialogs.ViewFilterDialog
+import io.eberlein.btinformer.dialogs.FilterDialog
 import io.eberlein.btinformer.objects.Filter
 import kotlinx.android.synthetic.main.fragment_filters.view.*
 import org.greenrobot.eventbus.EventBus
@@ -19,7 +19,7 @@ import org.greenrobot.eventbus.ThreadMode
 // todo allow deletion of filters
 class FiltersFragment : Fragment() {
     private lateinit var adapter: FilterAdapter
-    private lateinit var dialog: ViewFilterDialog
+    private lateinit var dialog: FilterDialog
 
     class EventFilterSelected(val filter: Filter)
     class EventFilterSaved(val filter: Filter)
@@ -31,7 +31,7 @@ class FiltersFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_filters, container, false)
         adapter = FilterAdapter()
-        dialog = ViewFilterDialog(requireContext())
+        dialog = FilterDialog(requireContext())
         view.rv_filters.adapter = adapter
         view.rv_filters.layoutManager = LinearLayoutManager(context)
         view.rv_filters.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))

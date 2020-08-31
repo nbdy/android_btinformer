@@ -22,6 +22,7 @@ class DeviceDialog(context: Context): DBObjectDialog<Device>(context, R.layout.d
         super.set(i)
         view.tv_name.text = i.name
         view.tv_mac.text = i.address
+        view.tv_manufacturer.text = i.manufacturer
         uuidAdapter.clear()
         uuidAdapter.add(i.uuids)
     }

@@ -1,24 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.HomeFragment">
+    android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnSearch"
+    <TextView
+        android:id="@+id/tv_lbl_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:textSize="32sp"
+        android:text="@string/app_name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/baseline_search_white_48"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_height="wrap_content"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_devices"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <TextView
+        android:id="@+id/tv_lbl_tutorial"
+        android:layout_below="@+id/tv_lbl_title"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/tutorial"
+        android:textSize="24sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_lbl_filter_creation"
+        android:layout_below="@id/tv_lbl_tutorial"
+        android:layout_marginTop="4dp"
+        android:textSize="18sp"
+        android:layout_alignStart="@id/tv_lbl_tutorial"
+        android:text="@string/filter_creation"
+        android:layout_marginStart="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_filter_creation"
+        android:layout_alignStart="@id/tv_lbl_filter_creation"
+        android:layout_marginStart="8dp"
+        android:layout_below="@id/tv_lbl_filter_creation"
+        android:layout_marginTop="4dp"
+        android:text="@string/filter_creation_tutorial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_mac"
+        android:layout_alignStart="@id/tv_filter_creation"
+        android:layout_below="@id/tv_filter_creation"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_uuid"
+        android:layout_alignStart="@id/tv_mac"
+        android:layout_below="@id/tv_mac"
+        android:layout_marginTop="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>

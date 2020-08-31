@@ -10,9 +10,14 @@
     <string name="uuid">uuid</string>
     <string name="cancel">cancel</string>
     <string name="save">save</string>
+    <string name="scan">scan</string>
+    <string name="manuf">manuf</string>
     <string name="gps_logging">gps logging</string>
     <string name="sleep_time">sleep time</string>
     <string name="milliseconds">milliseconds</string>
     <string name="delete">delete</string>
     <string name="create_filter">create filter</string>
+    <string name="tutorial">tutorial</string>
+    <string name="filter_creation">filter creation</string>
+    <string name="filter_creation_tutorial">you can long tap any of the below to open the \'create filter\' dialog</string>
 </resources>

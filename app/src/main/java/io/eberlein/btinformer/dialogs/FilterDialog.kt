@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.dialog_filter.*
 import kotlinx.android.synthetic.main.dialog_filter.view.*
 import org.greenrobot.eventbus.EventBus
 
-class ViewFilterDialog(c: Context) : DBObjectDialog<Filter>(c, R.layout.dialog_filter) {
+class FilterDialog(c: Context) : DBObjectDialog<Filter>(c, R.layout.dialog_filter) {
     private lateinit var filter: Filter
     private var options: ArrayList<String> = ArrayList()
     private var selectedOption: String
@@ -19,6 +19,20 @@ class ViewFilterDialog(c: Context) : DBObjectDialog<Filter>(c, R.layout.dialog_f
         FilterType.values().forEach { options.add(it.name) }
         selectedOption = options[0]
         view.sp_data_type.adapter = ArrayAdapter<String>(c, android.R.layout.simple_spinner_item, options)
+    }
+
+    companion object {
+        fun forMAC(c: Context, mac: String): FilterDialog {
+            val d = FilterDialog(c)
+            d.set(Filter.fromMAC(mac))
+            return d
+        }
+
+        fun forUUID(c: Context, uuid: String): FilterDialog {
+            val d = FilterDialog(c)
+            d.set(Filter.fromUUID(uuid))
+            return d
+        }
     }
 
     override fun save(){

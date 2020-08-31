@@ -9,6 +9,10 @@
             android:icon="@drawable/baseline_home_white_48"
             android:title="@string/home" />
         <item
+            android:id="@+id/nav_scan"
+            android:icon="@drawable/baseline_search_white_48"
+            android:title="@string/scan"/>
+        <item
             android:id="@+id/nav_filters"
             android:icon="@drawable/baseline_filter_alt_white_48"
             android:title="@string/filters" />

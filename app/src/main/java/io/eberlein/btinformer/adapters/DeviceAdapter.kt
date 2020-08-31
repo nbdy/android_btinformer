@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import io.eberlein.btinformer.objects.Device
 import io.eberlein.btinformer.R
 import io.eberlein.btinformer.ui.HomeFragment
+import io.eberlein.btinformer.ui.ScanFragment
 import kotlinx.android.synthetic.main.vh_device.view.*
 import org.greenrobot.eventbus.EventBus
 
@@ -39,6 +40,6 @@ class DeviceAdapter: DBObjectAdapter<DeviceHolder, Device>() {
     }
 
     override fun onItemClick(item: Device) {
-        EventBus.getDefault().post(HomeFragment.EventDeviceSelected(item))
+        EventBus.getDefault().post(ScanFragment.EventDeviceSelected(item))
     }
 }

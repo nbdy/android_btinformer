@@ -60,6 +60,14 @@ class Filter(var name: String, var data: String, var type: String): DBObject() {
             r.save()
             return r
         }
+
+        fun fromMAC(mac: String): Filter {
+            return Filter(mac, mac, FilterType.MAC.name)
+        }
+
+        fun fromUUID(uuid: String): Filter {
+            return Filter(uuid, uuid, FilterType.UUID.name)
+        }
     }
 
     override fun save(){

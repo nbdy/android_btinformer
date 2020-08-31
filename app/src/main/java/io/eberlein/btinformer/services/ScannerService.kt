@@ -1,4 +1,4 @@
-package io.eberlein.btinformer
+package io.eberlein.btinformer.services
 
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
@@ -11,9 +11,11 @@ import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
 import android.util.Log
+import io.eberlein.btinformer.NotificationHelper
 import io.eberlein.btinformer.objects.Device
 import io.eberlein.btinformer.objects.Filter
 import io.eberlein.btinformer.objects.Settings
+import io.eberlein.oui.OUI
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -34,13 +36,15 @@ class ScannerService : Service() {
     private lateinit var btAdapter: BluetoothAdapter
     private lateinit var leScanner: BluetoothLeScanner
 
+    private lateinit var oui: OUI
+
     private var foundDevices = ArrayList<Device>()
 
     private val scanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
             if (result != null) {
-                val d = Device(result)
+                val d = Device(result, oui)
                 Log.d(TAG, "found device: ${d.address} with name: ${d.name}")
                 runBlocking { applyFilters(d) }
                 EventBus.getDefault().post(EventFoundDevice(d))
@@ -70,6 +74,7 @@ class ScannerService : Service() {
     override fun onCreate() {
         Log.d(TAG, "onCreate")
         EventBus.getDefault().register(this)
+        EventBus.getDefault().post(OUIService.EventRequestOUI())
         Log.d(TAG, "getting Bluetooth stuff ready")
         btManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         btAdapter = btManager.adapter
@@ -88,7 +93,7 @@ class ScannerService : Service() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEventStartScan(e: ScannerService.EventChangeScan){
+    fun onEventStartScan(e: EventChangeScan){
         Log.d(TAG, "onEventStartScan")
         if(!scanning) startScan()
         else {
@@ -96,6 +101,11 @@ class ScannerService : Service() {
             handler.removeCallbacks(timeoutRunnable)
             stopScan()
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEventOUI(e: OUIService.EventOUI){
+        oui = e.oui
     }
 
     private fun stopScan(){
