@@ -17,8 +17,8 @@ import java.util.*
 
 
 class HomeFragment: Fragment(){
-    private val TAG = "HomeFragment"
     private lateinit var oui: OUI
+    private var valuesSet = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,26 +33,27 @@ class HomeFragment: Fragment(){
         EventBus.getDefault().post(OUIService.EventRequestOUI())
     }
 
-    private fun setValues(){ // todo fix values not persisting upon fragment change
+    private fun setValues(){
         tv_mac.text = oui.randomMAC()
         tv_mac.setOnLongClickListener {FilterDialog.forMAC(requireContext(), tv_mac.text as String).show(); false}
         tv_uuid.text = UUID.randomUUID().toString()
         tv_uuid.setOnLongClickListener {FilterDialog.forUUID(requireContext(), tv_uuid.text as String).show(); false}
+        valuesSet = true
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEventOUI(e: OUIService.EventOUI) {
         oui = e.oui
-        setValues()
+        if(!valuesSet) setValues()
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         EventBus.getDefault().register(this)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         EventBus.getDefault().unregister(this)
     }
 }

@@ -18,4 +18,3 @@
 - [paperdb](https://github.com/pilgr/Paper)
 - [oui](https://github.com/smthnspcl/oui)
 - [eventbus](https://github.com/greenrobot/EventBus)
-- [splitties-permissions](https://github.com/LouisCAD/Splitties/tree/master/modules/permissions)

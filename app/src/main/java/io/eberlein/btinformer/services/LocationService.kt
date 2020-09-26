@@ -23,16 +23,14 @@ class LocationService: Service() {
     class LL: LocationListener {
         lateinit var currentLocation: Location
 
-        override fun onLocationChanged(location: Location?) {
-            if(location != null) {
-                currentLocation = location
-                EventBus.getDefault().post(EventCurrentLocation(location))
-            }
+        override fun onLocationChanged(location: Location) {
+            currentLocation = location
+            EventBus.getDefault().post(EventCurrentLocation(location))
         }
 
         override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-        override fun onProviderEnabled(provider: String?) {}
-        override fun onProviderDisabled(provider: String?) {}
+        override fun onProviderEnabled(provider: String) {}
+        override fun onProviderDisabled(provider: String) {}
 
     }
 
