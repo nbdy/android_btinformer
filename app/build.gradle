@@ -53,4 +53,5 @@ dependencies {
     implementation 'io.paperdb:paperdb:2.7.1'
     implementation 'com.github.smthnspcl:oui:00825350de'
     implementation 'org.greenrobot:eventbus:3.2.0'
+    implementation 'com.blankj:utilcodex:1.29.0'
 }

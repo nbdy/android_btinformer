@@ -2,13 +2,14 @@ package io.eberlein.btinformer
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Toast
 import com.google.android.material.navigation.NavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.blankj.utilcode.constant.PermissionConstants
+import com.blankj.utilcode.util.PermissionUtils
+import com.blankj.utilcode.util.ToastUtils
 import io.eberlein.btinformer.services.LocationService
 import io.eberlein.btinformer.services.OUIService
 import io.eberlein.btinformer.services.ScannerService
@@ -17,48 +18,9 @@ import io.paperdb.Paper
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
-// todo: fix permission requests
+
 class MainActivity : AppCompatActivity() {
-    private val permissionsBt = arrayOf(
-        Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH_PRIVILEGED
-    )
-    private val permissionsBtCode = 420
-
-    private val permissionsGPS = arrayOf(
-        Manifest.permission.ACCESS_FINE_LOCATION
-    )
-    private val permissionsGPSCode = 666
-
-    private fun granted(grantResults: IntArray): Boolean {
-        return grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
-    }
-
     private var canUseGPS = false
-    private var canUseBT = false
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        var v = ""
-        when(requestCode) {
-            permissionsBtCode -> {
-                if(!granted(grantResults)) v = "bluetooth"
-                else canUseBT = true
-            }
-
-            permissionsGPSCode -> {
-                if(!granted(grantResults)) v = "gps"
-                else canUseGPS = true
-            }
-        }
-
-        if(v.isNotEmpty()) Toast.makeText(this, "Cannot use $v without permission.", Toast.LENGTH_LONG).show()
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-    }
 
     private lateinit var scanServiceIntent: Intent
     private lateinit var ouiServiceIntent: Intent
@@ -70,10 +32,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupUi()
-        checkPermissions()
         Paper.init(this)
         NotificationHelper.setup(this)
-        startServices()
+        checkPermissions()
     }
 
     private fun setupUi(){
@@ -117,9 +78,7 @@ class MainActivity : AppCompatActivity() {
         if(canUseGPS){
             locationServiceIntent = Intent(this, LocationService::class.java)
             serviceIntents.add(locationServiceIntent)
-        }
 
-        if(canUseBT){
             scanServiceIntent = Intent(this, ScannerService::class.java)
             serviceIntents.add(scanServiceIntent)
         }
@@ -134,15 +93,33 @@ class MainActivity : AppCompatActivity() {
         for(i in serviceIntents) stopService(i)
     }
 
-    private fun checkPermission(p: String){
-        // if(ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) requestPermissions()
+    private fun checkPermissions(){
+        checkLocationPermission()
     }
 
-    private fun checkPermissions(){
-        // permissionsBt.forEach {  }
+    private fun checkLocationPermission(){
+        if(PermissionUtils.isGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            canUseGPS = true
+            startServices()
+        }
+        else {
+            PermissionUtils.permission(PermissionConstants.LOCATION)
+                .callback(object : PermissionUtils.FullCallback {
+                    override fun onGranted(granted: MutableList<String>) {
+                        if (granted.size == 1) {
+                            canUseGPS = true
+                            startServices()
+                        }
+                    }
 
-        requestPermissions(permissionsBt, permissionsBtCode)
-        requestPermissions(permissionsGPS, permissionsGPSCode)
+                    override fun onDenied(
+                        deniedForever: MutableList<String>,
+                        denied: MutableList<String>
+                    ) {
+                        if (denied.size > 0) ToastUtils.showLong("GPS and Bluetooth functionality disabled.")
+                    }
+                }).request()
+        }
     }
 
     override fun onDestroy() {
